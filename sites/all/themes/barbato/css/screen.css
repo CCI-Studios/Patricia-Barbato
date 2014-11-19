@@ -647,7 +647,7 @@ ul.link-title a {
     margin: 0 auto;
     font-weight: normal;
     max-width: 1000px;
-    padding-left: 70px; }
+    padding-left: 80px; }
     #block-views-media-video-list-view-block > h2:before {
       content: url("../images/media-icon.png");
       display: inline-block;
@@ -656,6 +656,18 @@ ul.link-title a {
 
 #block-views-media-logos-block {
   padding-bottom: 50px; }
+  #block-views-media-logos-block .active, #block-views-media-logos-block .views-row:hover {
+    background-color: #a0c05d;
+    background-image: url("../images/link-title-leaf.png");
+    background-repeat: no-repeat;
+    background-position: left;
+    box-shadow: 3px 0px 20px #80a82b inset;
+    -moz-box-shadow: 3px 0px 20px #80a82b inset;
+    -webkit-box-shadow: 3px 0px 20px #80a82b inset;
+    text-decoration: none;
+    padding: 0 10px 0px 10px;
+    color: white;
+    background-size: contain; }
   #block-views-media-logos-block .views-row {
     display: inline-block;
     padding: 0 10px;
@@ -664,31 +676,19 @@ ul.link-title a {
       font-size: 28px;
       padding-bottom: 0;
       text-shadow: 1px 1px 1px #969696; }
-    #block-views-media-logos-block .views-row:hover {
-      background-color: #a0c05d;
-      background-image: url("../images/link-title-leaf.png");
-      background-repeat: no-repeat;
-      background-position: left;
-      box-shadow: 3px 0px 20px #80a82b inset;
-      -moz-box-shadow: 3px 0px 20px #80a82b inset;
-      -webkit-box-shadow: 3px 0px 20px #80a82b inset;
-      text-decoration: none;
-      padding: 0 10px 0px 10px;
-      color: white;
-      background-size: contain; }
-  #block-views-media-logos-block #inspire {
+  #block-views-media-logos-block .active #inspire, #block-views-media-logos-block .views-row:hover #inspire, #block-views-media-logos-block #inspire {
     width: 250px; }
-    #block-views-media-logos-block #inspire:hover img {
+    #block-views-media-logos-block .active #inspire:hover img, #block-views-media-logos-block .views-row:hover #inspire:hover img, #block-views-media-logos-block #inspire:hover img {
       display: none; }
-    #block-views-media-logos-block #inspire img {
+    #block-views-media-logos-block .active #inspire img, #block-views-media-logos-block .views-row:hover #inspire img, #block-views-media-logos-block #inspire img {
       width: 250px !important;
       height: 35px !important; }
-    #block-views-media-logos-block #inspire:hover {
+    #block-views-media-logos-block .active #inspire:hover, #block-views-media-logos-block .views-row:hover #inspire:hover, #block-views-media-logos-block #inspire:hover {
       background-image: url("../images/inspire-career-white.png");
       background-repeat: no-repeat;
       background-position: center center;
       background-size: 100%; }
-    #block-views-media-logos-block #inspire:hover p:before {
+    #block-views-media-logos-block .active #inspire:hover p:before, #block-views-media-logos-block .views-row:hover #inspire:hover p:before, #block-views-media-logos-block #inspire:hover p:before {
       content: '';
       display: inline-block;
       position: relative;
@@ -696,6 +696,24 @@ ul.link-title a {
       width: 30px;
       margin-top: -10px;
       left: -110px; }
+  #block-views-media-logos-block .active #inspire, #block-views-media-logos-block .views-row:hover #inspire {
+    background-image: url("../images/inspire-career-white.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100%; }
+    #block-views-media-logos-block .active #inspire img, #block-views-media-logos-block .views-row:hover #inspire img {
+      display: none; }
+    #block-views-media-logos-block .active #inspire p:before, #block-views-media-logos-block .views-row:hover #inspire p:before {
+      content: '';
+      display: inline-block;
+      position: relative;
+      top: 13px;
+      width: 30px;
+      margin-top: -10px;
+      left: -110px; }
+    #block-views-media-logos-block .active #inspire img, #block-views-media-logos-block .views-row:hover #inspire img {
+      width: 250px !important;
+      height: 35px !important; }
   #block-views-media-logos-block .view-content {
     line-height: 50px;
     text-align: center; }
@@ -815,7 +833,7 @@ ul.link-title a {
   .view-text-rotator ul.indicators {
     z-index: 9999;
     text-align: center; }
-    .view-text-rotator ul.indicators li.active {
+    .view-text-rotator ul.indicators li.active, .view-text-rotator ul.indicators #block-views-media-logos-block li.views-row:hover, #block-views-media-logos-block .view-text-rotator ul.indicators li.views-row:hover {
       opacity: 1; }
     .view-text-rotator ul.indicators li {
       width: 30px;

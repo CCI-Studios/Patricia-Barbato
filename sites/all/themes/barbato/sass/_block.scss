@@ -490,7 +490,7 @@ ul.link-title
 		margin: 0 auto;
 		font-weight: normal;
 		max-width: 1000px;
-		padding-left:70px;
+		padding-left:80px;
 
 		&:before
 		{
@@ -505,6 +505,23 @@ ul.link-title
 #block-views-media-logos-block
 {	
 	padding-bottom: 50px;
+
+	.active
+	{	
+		background-color: #a0c05d;
+		background-image:url("../images/link-title-leaf.png");
+		background-repeat:no-repeat;
+		background-position:left;
+		box-shadow: 3px 0px 20px $dark-green inset;
+		-moz-box-shadow: 3px 0px 20px $dark-green inset;
+		-webkit-box-shadow: 3px 0px 20px $dark-green inset;
+		text-decoration: none;
+		padding: 0 10px 0px 10px;
+		color: white;
+		background-size:contain;
+
+	}
+
 
 	.views-row
 	{
@@ -521,27 +538,16 @@ ul.link-title
 		}
 
 		&:hover
-		{	
-			background-color: #a0c05d;
-			background-image:url("../images/link-title-leaf.png");
-			background-repeat:no-repeat;
-			background-position:left;
-			box-shadow: 3px 0px 20px $dark-green inset;
-			-moz-box-shadow: 3px 0px 20px $dark-green inset;
-			-webkit-box-shadow: 3px 0px 20px $dark-green inset;
-			text-decoration: none;
-			padding: 0 10px 0px 10px;
-			color: white;
-			background-size:contain;
-
+		{
+			@extend .active;
 		}
 
 	}
 
-
-	#inspire
+	.active #inspire,#inspire
 	{	
 		width: 250px;
+
 		&:hover img
 		{
 			display: none;
@@ -571,6 +577,33 @@ ul.link-title
 			margin-top: -10px;
 			left: -110px;
 		} 
+	}
+
+	.active #inspire
+	{	
+		img
+		{
+			display: none;
+		}
+		p:before
+		{ 
+			content: '';
+			display: inline-block;
+			position: relative;
+			top: 13px;
+			width: 30px;
+			margin-top: -10px;
+			left: -110px;
+		} 
+		img
+		{
+			width:250px ! important;
+			height: 35px ! important;
+		}
+		background-image:url("../images/inspire-career-white.png");
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-size: 100%;
 	}
 
 	.view-content
