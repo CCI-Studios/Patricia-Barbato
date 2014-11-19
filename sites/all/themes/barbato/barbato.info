@@ -1,0 +1,26 @@
+name = Patricia Barbato
+description = Patricia Barbato Custom
+core = 7.x
+
+scripts[] = js/video_scroller.js
+scripts[] = js/text_rotator.js
+;scripts[] = js/calc.min.js
+scripts[] = js/menu-btn.js
+
+
+stylesheets[all][] = css/screen.css
+
+regions[navigation] = Navigation
+regions[header] = Header
+regions[banner] = Banner
+regions[white-region] = White region
+regions[green-region] = Green region
+regions[grey-region] = grey region
+regions[white2-region] =  second white region
+regions[help] = Help
+regions[content-home] = Content Home
+regions[content] = Content
+regions[sidebar] = Sidebar
+regions[widgets] = Widgets
+regions[footer] = Footer
+

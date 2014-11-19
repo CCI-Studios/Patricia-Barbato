@@ -1,0 +1,17 @@
+name = Video Upload Field
+description = Upload video to YouTube
+core = 7.x
+package = Fields
+dependencies[] = file
+files[] = video_upload.module
+files[] = video_upload.field.inc
+files[] = video_upload.install
+files[] = video_upload.widget.inc
+files[] = video_upload.admin.inc
+files[] = tests/video_upload.test
+; Information added by drupal.org packaging script on 2013-10-19
+version = "7.x-2.x-dev"
+core = "7.x"
+project = "video_upload"
+datestamp = "1382152003"
+

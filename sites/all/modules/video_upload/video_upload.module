@@ -1,0 +1,450 @@
+<?php
+
+
+/**
+ * @file
+ *   video upload module
+ * @todo
+ *   See TODO.txt, and inline todo comments
+ */
+
+// Load all Field module hooks for Video Upload.
+module_load_include('inc', 'video_upload', 'video_upload.field');
+module_load_include('inc', 'video_upload', 'video_upload.widget');
+
+/**
+ * Video status levels.
+ */
+define('VIDEO_UPLOAD_STATUS_ORPHANED', 'orphaned');
+define('VIDEO_UPLOAD_STATUS_DELETE', 'delete');
+define('VIDEO_UPLOAD_STATUS_BAD', 'bad');
+define('VIDEO_UPLOAD_STATUS_UNKNOWN', 'unknown');
+define('VIDEO_UPLOAD_STATUS_OK', 'ok');
+define('VIDEO_UPLOAD_STATUS_OK_SYNCED', 'synced');
+define('VIDEO_UPLOAD_STATUS_UPLOAD_PENDING', 'upload_pending');
+
+/**
+ * Video synchronization.
+ */
+define('VIDEO_UPLOAD_SYNC_NONE', 0);
+define('VIDEO_UPLOAD_SYNC', 1);
+define('VIDEO_UPLOAD_SYNC_APPEND', 2);
+
+/**
+ * Initialize the Video Upload provider.
+ */
+function video_upload_initialize_provider() {
+  // @TODO
+  // Providers should be configurable (only applicable once there is more
+  // than one provider though).
+  require_once drupal_get_path('module', 'video_upload') . '/providers/youtube/youtube.inc';
+}
+
+/**
+ * Implement hook_theme().
+ */
+function video_upload_theme() {
+  $theme = array(
+    'video_upload_video' => array(
+      'variables' => array('yt_id' => NULL, 'width' => '425', 'height' => '355', 'display' => array(), 'params' => array(), 'attributes' => array()),
+    ),
+    'video_upload_video_thumb' => array(
+      'variables' => array('display' => NULL, 'item' => NULL, 'path' => NULL),
+    ),
+    'video_upload_video_status_message' => array(
+      'variables' => array('item' => NULL, 'message' => NULL),
+    ),
+    'video_upload_admin_video_form' => array(
+      'variables' => array('form' => NULL),
+    ),
+    'video_upload_status_text' => array(
+      'variables' => array('status' => NULL),
+    ),
+    'video_upload_missing_image' => array(
+      'variables' => array('style' => 'full', 'width' => 425, 'height' => 355, 'attributes' => array()),
+    ),
+    'video_upload_widget' => array(
+      'variables' => array('element' => NULL),
+      'file' => 'video_upload.field.inc',
+    ),
+  );
+
+  // Field formatters.
+  $formatters = array(
+    'field_formatter_video_upload',
+    'field_formatter_video_upload_thumb',
+    'field_formatter_video_upload_thumb_link',
+    'field_formatter_video_upload_small',
+  );
+
+  foreach ($formatters as $formatter) {
+    $theme[$formatter] = array(
+      'variables' => array('item' => NULL, 'display' => NULL),
+    );
+  }
+
+  $theme['field_formatter_video_upload_thumb_link']['variables']['path'] = NULL;
+
+  foreach ($theme as $function => $data) {
+    if (!isset($theme[$function]['file'])) {
+      $theme[$function]['file'] = 'video_upload.theme.inc';
+    }
+  }
+
+  return $theme;
+}
+
+/**
+ * Implement hook_permission().
+ */
+function video_upload_permission() {
+  return array(
+    'administer video upload settings' => array(
+      'title' => t('Administer video upload settings'),
+      'description' => t('Access and change video upload account credentials for 3rd-party video.'),
+    ),
+    'administer uploaded videos' => array(
+      'title' => t('Administer uploaded videos'),
+      'description' => t('Manage videos uploaded to 3rd-party video provider.'),
+    ),
+  );
+}
+
+/**
+ * Implement hook_menu().
+ */
+function video_upload_menu() {
+  $items['admin/config/media/video-upload'] = array(
+    'title' => 'Video Upload Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_video_upload_admin_settings_form'),
+    'access arguments' => array('administer video upload settings'),
+    'file' => 'video_upload.admin.inc',
+    'description' => 'Video provider settings for the <em>Video Upload</em> module.',
+  );
+
+  // Admin page for removing stranded videos (not attached to a node).
+  $items['admin/content/video-upload'] = array(
+    'title' => 'Manage Video Uploads',
+    'page callback' => 'video_upload_admin_video',
+    'access arguments' => array('administer uploaded videos'),
+    'file' => 'video_upload.admin.inc',
+    'description' => 'Manage all uploaded videos.',
+  );
+
+  return $items;
+}
+
+/**
+ * Implement hook_file_references().
+ */
+function video_upload_file_references($file) {
+  $count = file_get_file_reference_count($file, NULL, 'video_upload');
+  return $count ? array('video_upload' => $count) : NULL;
+}
+
+/**
+ * Sets a default title for uploaded video.
+ */
+function _video_upload_set_default_title($node, $widget) {
+  $title = '';
+  switch ($widget['settings']['default_title_sync']) {
+    case VIDEO_UPLOAD_SYNC_APPEND :
+      $title = $widget['settings']['default_title'];
+      if ($node->title) {
+        $title .= ': ';
+      }
+      // Fall through to append.
+    case VIDEO_UPLOAD_SYNC :
+      if ($node->title) {
+        $title = $title . $node->title;
+        break;
+      }
+    case VIDEO_UPLOAD_SYNC_NONE :
+    default :
+      $title = $widget['settings']['default_title']
+        ? $widget['settings']['default_title']
+        : t('Video from @site_name', array('@site_name' => variable_get('site_name', 'Drupal')));
+  }
+
+  if (module_exists('token')) {
+    global $user;
+    $title = token_replace($title);
+    $title = token_replace($title, 'user', $user);
+    $title = token_replace($title, 'node', $node);
+  }
+
+  // Can't be blank.
+  if (!trim($title)) {
+    $title = t('Placeholder Title');
+  }
+
+  $max = _video_upload_max_length_provider('title');
+  $title = substr($title, 0, $max);
+  return $title;
+}
+
+/**
+ * Sets a default description for uploaded video.
+ * @TODO: site admins need to have more control over this (eg, some may
+ *        prefer that the site description goes up with the video, rather than
+ *        user-entered data.
+ */
+function _video_upload_set_default_description($node, $widget) {
+  // Set description to teaser.
+  switch ($widget['settings']['default_description_sync']) {
+    case VIDEO_UPLOAD_SYNC_APPEND :
+      $description = $widget['settings']['default_description'] . "\n\n";
+      // Aall through to add teaser.
+    case VIDEO_UPLOAD_SYNC :
+      if (isset($node->teaser)) {
+        // @TODO teasers are done differently in d7.
+        $description = $description . $node->teaser;
+        break;
+      }
+      // Otherwise, fall through.
+    case VIDEO_UPLOAD_SYNC_NONE :
+      $description = $widget['settings']['default_description'];
+
+  }
+
+  if (module_exists('token')) {
+    global $user;
+    $description = token_replace($description);
+    $description = token_replace($description, 'user', $user);
+    $description = token_replace($description, 'node', $node);
+  }
+
+  if (!trim($description)) {
+    $description = t('Video uploaded from @site_name : @site_slogan', array('@site_name' => variable_get('site_name', 'Drupal'), '@site_slogan' => variable_get('site_slogan', FALSE)));
+
+    if (module_exists('token')) {
+      global $user;
+      $description = token_replace($description, 'user', $user);
+    }
+  }
+
+  // No tags allowed.
+  // @TODO This may be YouTube specific.
+  return strip_tags($description);
+}
+
+/**
+ * Sets developer tags.
+ * @return array
+ */
+function _video_upload_set_developer_tags($node, $widget) {
+  if ($widget['settings']['developer_tags']) {
+    $tags = explode(',', $widget['settings']['developer_tags']);
+  }
+  else {
+    return array(substr(str_replace(array(',', ' '), '', trim(variable_get('site_name', 'Drupal'))), 0, 25));
+  }
+
+  if (module_exists('token')) {
+    global $user;
+    foreach ($tags as $key => $tag) {
+      // There seems to be an invisible 26 character limit.
+      // @TODO This is YouTube specific.
+      $tags[$key] = substr(str_replace(array(',', ' '), '', trim(check_plain(token_replace($tag, 'user', $user)))), 0, 25);
+    }
+  }
+
+  return $tags;
+}
+
+/**
+ * Implement hook_cron().
+ *
+ * @TODO Use hook_cron_queue_info().
+ */
+function video_upload_cron() {
+  module_load_include('admin.inc', 'video_upload');
+
+  // Find types containing a video_upload field.
+  $fields = field_info_fields(NULL, NULL, 'video_upload');
+  foreach ($fields as $key => $field) {
+    if ($field['type'] != 'video_upload') {
+      unset($fields[$key]);
+    }
+  }
+
+  // Verify videos.
+  _video_upload_verify_all($fields);
+
+  // @TODO get this working in d7.
+  // Delete videos queued for deletion.
+  // _video_upload_delete_rejected_videos($fields);
+
+  // @TODO get this working in d7.
+  // Update provider info for all flagged videos.
+  // _video_upload_update_all_videos($fields);
+
+  // Upload any pending videos.
+  _video_upload_upload_all($fields);
+}
+
+/**
+ * Implement hook_views_api().
+ */
+function video_upload_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'video_upload') . '/views',
+  );
+}
+
+/**
+ * Get taxonomy terms associated with node.
+ * @param object $node
+ * @return array
+ *   Array of keywords.
+ */
+function _video_upload_get_formatted_taxonomy($node) {
+  $video_taxonomy = array();
+
+  if (!isset($node->taxonomy)) {
+    // @TODO this needs to work for d7.
+    return FALSE;
+  }
+
+  foreach ($node->taxonomy as $tid => $term) {
+    $video_taxonomy[] = $term->name;
+  }
+
+  if (empty($video_taxonomy)) {
+    return FALSE;
+  }
+
+  return $video_taxonomy;
+}
+
+/**
+ * Obtain the value of various maximum lengths.
+ */
+function _video_upload_max_length_provider($entity = 'title') {
+  // @TODO Abstract this out (60 is the yt max).
+  return 60;
+}
+
+/**
+ * Prepare a node and video to be sent to the configured provider. Also sets
+ * the node status to unknown since once the video is sent, the status is
+ * unknown until processing is complete.
+ *
+ * @param object $video
+ *   A local video object.
+ * @return boolean
+ *   True if any videos were uploaded.
+ */
+function video_upload_upload($field, $entity) {
+  $update = 0;
+  $language = field_language($entity->object, $entity, $field['field_name']);
+  foreach ($entity->{$field['field_name']}[$language] as $delta => $video) {
+    // Make sure this video needs to be uploaded.
+    if ($video['video_status'] != VIDEO_UPLOAD_STATUS_UPLOAD_PENDING) {
+      continue;
+    }
+    $file = file_load($video['fid']);
+    $video['filepath'] = drupal_realpath($file->uri);
+    $video['filemime'] = $file->filemime;
+
+    // Perform upload.
+    $result = video_upload_provider_upload($video, $entity, $field);
+    if ($result['video_id']) {
+      $language = field_language($entity->object, $entity, $field['field_name']);
+      $video['video_id'] = $result['video_id'];
+      $video['video_status'] = VIDEO_UPLOAD_STATUS_UNKNOWN;
+      $video['video_status_ts'] = REQUEST_TIME;
+      $update ++;
+      $entity->{$field['field_name']}[$language][$delta] = $video;
+    }
+  }
+
+  if ($update > 0) {
+    _video_upload_update_video($entity);
+  }
+
+  return $update;
+}
+
+/**
+ * Call the provider's upload function and send the video.
+ *
+ * @param $node
+ *   The associated video.
+ * @param $video
+ *   The filefield video array.
+ */
+function video_upload_provider_upload($video, $node, $field) {
+  // @todo this needs to be abstracted away from youtube.
+  video_upload_initialize_provider();
+  return video_upload_upload_youtube($video, $node, $field);
+}
+
+/**
+ * Connect to the provider.
+ * @param mixed $http_client
+ *   object http_client. If passed as boolean TRUE, the http_client will be
+ *   generated.
+ * @return video provider connection object
+ */
+function video_upload_connect($http_client) {
+  if ($http_client === TRUE) {
+    $http_client = video_upload_authenticate();
+  }
+  // @todo abstract out youtube
+  video_upload_initialize_provider();
+  return _video_upload_youtube($http_client);
+}
+
+/**
+ * Authenticate to the provider.
+ */
+function video_upload_authenticate($reauthenticate = FALSE) {
+  static $authentication;
+  if (!$authentication || $reauthenticate) {
+    // @todo abstract out youtube
+    video_upload_initialize_provider();
+    $authentication = _video_upload_authenticate_youtube();
+  }
+  return $authentication;
+}
+
+/**
+ * Remove a video from the local database.
+ */
+function video_upload_delete_local($video) {
+  if ($video->fid) {
+    return db_query("DELETE FROM {video_upload} WHERE fid = %d", array(':fid' => $video->fid));
+  }
+  watchdog('video_upload', 'Attempted to delete a video without a fid.', array(), WATCHDOG_ERROR);
+}
+
+/**
+ * Get available video statuses.
+ */
+function video_upload_get_all_statuses() {
+  return array(
+    VIDEO_UPLOAD_STATUS_ORPHANED => t('Orphaned'),
+    VIDEO_UPLOAD_STATUS_DELETE => t('Queued for deletion'),
+    VIDEO_UPLOAD_STATUS_BAD => t('Bad'),
+    VIDEO_UPLOAD_STATUS_UNKNOWN => t('Unknown'),
+    VIDEO_UPLOAD_STATUS_OK => t('Good'),
+    VIDEO_UPLOAD_STATUS_OK_SYNCED => t('Good: Synced to provider'),
+    VIDEO_UPLOAD_STATUS_UPLOAD_PENDING => t('Upload pending'),
+  );
+}
+
+/**
+ * Update a video upload record.
+ */
+function _video_upload_update_video($entity) {
+  $function = $entity->object . '_save';
+  if (function_exists($function)) {
+    $function($entity);
+  }
+  else {
+    // @TODO object save function doesn't exist. Throw exception.
+  }
+}
