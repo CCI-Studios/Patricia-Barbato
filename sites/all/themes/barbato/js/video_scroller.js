@@ -11,6 +11,7 @@
 		$("#next").click(clickNext);
 		$(".view-media-logos .views-row").click(clickThumbnail);
 		$(".view-media-video-list-view").on("mouseenter", pause).on("mouseleave", unpause).on("click", stop);
+
 		max = rows().length;
 
 		var $first = rows().eq(0).clone();
@@ -20,15 +21,22 @@
 		setTimeout(layout, 50);
 		$(window).resize(layout);
 
-		addActive();
-		start();
-
+		console.log(window.location.hash);
+		if (window.location.hash == "#views-row-2")
+		{
+			gotoIndex(1);
+			container().stop(true, true);
+		}
+		else
+		{
+			addActive();
+			start();
+		}
 	});
 
 	function addActive()
 	{
 		$(".views-row-first").addClass("active");
-
 	}
 
 	function start()

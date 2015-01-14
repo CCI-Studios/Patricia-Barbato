@@ -55,8 +55,8 @@
 			right: 0;
 			img
 			{	
-				width:373px ! important;
-				height: auto ! important;
+			width:373px ! important;
+			height: auto ! important;
 			}
 		}
 
@@ -142,6 +142,18 @@
 	#block-system-main-menu .content .expanded .menu
 	{
 		width: 100%;
+	}
+
+	#block-block-10
+	{	
+		
+		#inspireheading
+		{
+			text-align: left;
+			width: 70%;
+			padding-top: 0;
+			margin: 0 auto;
+		}
 	}
 
 }
@@ -267,20 +279,7 @@
 		}
 	}
 
-	#block-block-16	
-	{
-		ul.link-title a:hover
-		{
-			background-color:transparent;
-			box-shadow:none;
-			background-image:none;
-
-			&:before
-			{
-				display: none;
-			}
-		}
-	}
+	
 
 	.view-media-video-list-view 
 	{
@@ -368,6 +367,11 @@
 
 	}
 
+	#block-block-12
+	{
+		padding-top:0px;
+	}
+
 	#block-block-3
 	{
 		padding-left: 20px;
@@ -385,6 +389,21 @@
 			width:100%;
 		}
 	}
+
+	#block-block-6,
+	#block-block-8,
+	{
+		background-image:none;
+		padding-bottom:0px;
+		box-shadow: 1px 2px 4px gray;
+	}
+
+	#block-block-7,
+	#block-block-9,
+	{	
+		margin-top: 0px;
+	}
+
 }
 
 @media screen and (min-width: 641px) 
@@ -399,7 +418,7 @@
 {	
 	body
 	{
-		padding-bottom:0;
+		padding-bottom:0px;
 	}
 
 	table
@@ -416,7 +435,7 @@
 	#social
 	{
 		z-index: 99999;
-		right: -75px;
+		right: -33px;
 		top: 10px;
 
 		#email 
@@ -430,6 +449,11 @@
 			}
 		}
 
+		#linkedin
+		{
+			padding-right:0;
+		}
+
 		#linkedin a
 		{
 		 	img
@@ -438,6 +462,21 @@
 		 	}
 
 			background-image:url("../images/mobile-linkedin.png");
+			background-repeat: no-repeat;
+			height:30px;
+			width: 30px;
+			display: block;
+			background-position: center center;
+		}
+
+		#twitter a
+		{
+		 	img
+		 	{
+		 		display: none;
+		 	}
+
+			background-image:url("../images/twitter-mobile.png");
 			background-repeat: no-repeat;
 			height:30px;
 			width: 30px;
@@ -755,6 +794,14 @@
 			height: auto !important;
 		}
 	}
+
+	.page-node-5
+	{
+			.contact-image img
+			{
+				float: none ! important;
+			}
+	}
 }
 
 @media screen and (max-width: 480px) 
@@ -791,7 +838,7 @@
 
 		img
 		{
-			width: 100% ! important;
+			//width: 100% ! important;
 			bottom: -4px;
 			position: relative;
 		}
@@ -902,16 +949,9 @@
 		-webkit-column-count: 1;
 	}
 
-	#block-block-8, #block-block-6
+	#block-views-media-video-list-view-block > h2
 	{
-		background-position: 13%;
-		padding-bottom:10px;
-		margin-top: -2px;
-	}
-
-	#block-block-7, #block-block-9
-	{
-		margin-top: -37px;
+		padding-left:50px;
 	}
 
 }
@@ -1012,10 +1052,15 @@
 
 
 
-@media screen and (min-height: 850px) and (max-width:1620px) 
+@media screen and (min-height: 750px) and (max-width:1620px) 
 {
 	html
 	{
 		height: 100%;
 	}
+}
+
+@media screen and (min-width: 1110px) and (max-width:1160px) 
+{
+	
 }

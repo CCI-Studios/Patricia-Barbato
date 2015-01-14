@@ -239,11 +239,6 @@
 	{	
 		padding-top: 100px;
 	}
-
-	#block-block-5 #image
-	{
-		margin-top: -125px;
-	}
 }
 
 #block-block-1
@@ -269,6 +264,11 @@
 	height: 363px;
 
 	img
+	{
+		display: none;
+	}
+
+	.contextual-links-wrapper
 	{
 		display: none;
 	}
@@ -355,6 +355,34 @@
 {
 	text-align: center;
 	padding-bottom:40px;
+	max-width:1220px;
+	margin:0 auto;
+
+	h2
+	{
+		text-align: left;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding-left:20px;
+	}
+	h2:before
+	{
+		content: url("../images/author-icon.png");
+		display: inline-block;
+		position: relative;
+		top: 5px;
+		padding-right: 6px;
+	}
+
+	#inspireheading
+	{
+		float: left;
+		padding-top: 150px;
+		width: 40%;
+		margin: 0px;
+		padding-left:20px;
+		text-align:left;
+	}
 }
 
 #block-block-11
@@ -482,17 +510,24 @@ ul.link-title
 {
 	width: 100%;
 	background: white;
+}
 
-	& > h2
-	{
+#block-block-18 
+	{	
+
 		display: block;
-		font-size: 36px;
 		margin: 0 auto;
 		font-weight: normal;
-		max-width: 1000px;
-		padding-left:80px;
+		max-width: 960px;
+		padding-left: 40px;
+		padding-bottom:10px;
 
-		&:before
+		.content
+		{
+			padding-right:10px;
+		}
+
+		& > h2:before
 		{
 			content: url("../images/media-icon.png");
 			display: inline-block;
@@ -500,12 +535,8 @@ ul.link-title
 			padding-right: 6px;
 		}
 	}
-}
-
 #block-views-media-logos-block
 {	
-	padding-bottom: 50px;
-
 	.active
 	{	
 		background-color: #a0c05d;
@@ -616,4 +647,11 @@ ul.link-title
 			vertical-align: middle;
 		}
 	}
+}
+
+#block-block-19
+{
+	max-width: 900px;
+	margin: 0 auto;
+	padding:40px 40px;
 }

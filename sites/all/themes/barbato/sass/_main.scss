@@ -34,7 +34,13 @@ li
 
 }
 
-p,h3
+h3
+{
+	font-size:18px;
+	padding-bottom:20px;
+}
+
+p
 {
 	font-size:16px;
 	padding-bottom:20px;
@@ -105,11 +111,11 @@ a:active
 {
 	height: 600px;
 	margin-top: -115px;
-	background-image: url("../images/banner1.jpg");
+	background-image: url("../images/banner-about.jpg");
 	background-size: cover;
 	-ms-behavior: url("/sites/all/themes/barbato/css/backgroundsize.htc");
 	background-repeat:no-repeat;
-	background-position: center;
+	background-position: center 66%;
 	z-index: -999999;
 	position: relative;
 }
@@ -131,11 +137,21 @@ a:active
 	}
 }
 
+.page-node-5
+{
+	#banner
+	{
+		background-image: url("../images/contact-banner.jpg");
+		background-position:bottom center;
+	}
+}
+
 .page-node-23
 {
 	#banner
 	{
 		background-image: url("../images/media-banner.jpg");
+		background-position: center 81%;
 	}
 }
 
@@ -155,9 +171,11 @@ a:active
 		padding-right: 20px;
 	}
 
-	#linkedin
+	#linkedin,
+	#twitter
 	{
 		display: inline-block;
+		padding-right:20px;
 	}
 
 	#email a
@@ -474,6 +492,7 @@ iframe
 	a:hover
 	{
 		text-decoration: underline;
+		font-weight: bold;
 	}
 }
 }
@@ -520,4 +539,49 @@ div#node-22
 	{
 		color:$green;
 	}
+}
+
+#node-13 .content
+{
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#node-5
+{		
+	h2:before
+	{
+		content: url("../images/phone.png");
+		display: inline-block;
+		position: relative;
+		top: 7px;
+		padding-right: 6px;
+	}
+
+	.email-address,.linkedin-address
+	{
+		line-height: 40px;
+	}
+
+	.email-address a
+	{
+		vertical-align: middle;
+	}
+
+	img.email 
+	{
+		vertical-align:middle;
+		padding-right:5px;
+	}
+
+	img.linkedin 
+	{
+		padding-right:5px;
+	}
+}
+
+.page-user #block-system-main .content
+{
+	padding-left:100px;
 }
