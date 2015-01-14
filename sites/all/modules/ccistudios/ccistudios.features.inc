@@ -16,18 +16,10 @@ function ccistudios_views_api($module = NULL, $api = NULL) {
  */
 function ccistudios_node_info() {
   $items = array(
-    'media_logo' => array(
-      'name' => t('media logo'),
-      'base' => 'node_content',
-      'description' => '',
-      'has_title' => '1',
-      'title_label' => t('Title'),
-      'help' => '',
-    ),
     'media_video_list' => array(
-      'name' => t('Media video list'),
+      'name' => t('Media Video'),
       'base' => 'node_content',
-      'description' => t('Media page videos l'),
+      'description' => t('Video on the media page'),
       'has_title' => '1',
       'title_label' => t('Title'),
       'help' => '',
@@ -41,7 +33,7 @@ function ccistudios_node_info() {
       'help' => '',
     ),
     'text_rotator' => array(
-      'name' => t('Text rotator'),
+      'name' => t('About Text Slideshow'),
       'base' => 'node_content',
       'description' => '',
       'has_title' => '1',
