@@ -74,7 +74,7 @@
 	function moveContainer()
 	{
 		var left = "-" + (active*rowWidth()) + "%";
-		container().stop(false, false).animate({"left":left},1500);
+		container().stop(false, false).animate({"left":left},600);
 		setActiveIndicator(active);
 	}
 	function jumpToEnd()
